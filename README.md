@@ -34,7 +34,9 @@ npm run lint       # oxlint
 ```
 
 The dev server opens a **playground** with a fidelity toggle (top-right) and a view switcher:
-**Contact · Dashboard (Analytics) · Sales · Charts · Controls**.
+**Showcase · Contact · Dashboard (Analytics) · Sales · Charts · Controls**. The **Showcase**
+view (default) is a presentation gallery of every component, grouped by category — the best
+place to see the whole kit react to the fidelity dial at once.
 
 ---
 

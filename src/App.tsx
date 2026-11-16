@@ -17,6 +17,7 @@ import { Switch } from '@/components/ui/switch'
 import { Slider } from '@/components/ui/slider'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Separator } from '@/components/ui/separator'
 import {
   AreaChart,
   BarChart,
@@ -482,9 +483,267 @@ function ChartsScreen() {
   )
 }
 
+/* ---------------------------- Showcase screen --------------------------- */
+/* A presentation gallery of every kit component, grouped by category. The
+   section/cell chrome is plain playground styling; the components inside each
+   cell are the real kit and react to the fidelity dial. */
+
+function ShowSection({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <section className="space-y-5">
+      <div className="flex items-center gap-3">
+        <h2 className="text-xs font-semibold tracking-widest text-neutral-500 uppercase">{title}</h2>
+        <div className="h-px flex-1 bg-neutral-200" />
+      </div>
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">{children}</div>
+    </section>
+  )
+}
+
+function Cell({
+  name,
+  children,
+  span,
+  tall,
+}: {
+  name: string
+  children: ReactNode
+  span?: boolean
+  tall?: boolean
+}) {
+  return (
+    <div className={'flex flex-col gap-2 ' + (span ? 'sm:col-span-2' : '')}>
+      <div
+        className={
+          'flex flex-1 items-center justify-center rounded-lg border border-neutral-200 bg-white p-5 ' +
+          (tall ? 'min-h-44' : 'min-h-28')
+        }
+      >
+        <div className="w-full">{children}</div>
+      </div>
+      <span className="pl-0.5 font-mono text-[11px] text-neutral-500">{name}</span>
+    </div>
+  )
+}
+
+function ShowcaseScreen() {
+  return (
+    <div className="mx-auto max-w-6xl space-y-10 rounded-xl border border-neutral-200 bg-neutral-50 p-6 sm:p-8">
+      <div className="space-y-1">
+        <Heading level={1}>Component library</Heading>
+        <Text lines={1} className="w-80">Every kit component, grouped — reacts to the fidelity dial above</Text>
+      </div>
+
+      <ShowSection title="Typography">
+        <Cell name="Heading (1 / 2 / 3)">
+          <div className="space-y-2">
+            <Heading level={1}>Display heading</Heading>
+            <Heading level={2}>Section heading</Heading>
+            <Heading level={3}>Subsection</Heading>
+          </div>
+        </Cell>
+        <Cell name="Label">
+          <Label>Form label</Label>
+        </Cell>
+        <Cell name="Text / Lines">
+          <Text lines={3} />
+        </Cell>
+      </ShowSection>
+
+      <ShowSection title="Actions">
+        <Cell name="Button — variants">
+          <div className="flex flex-wrap gap-2">
+            <Button><Label className="text-primary-foreground">Primary</Label></Button>
+            <Button variant="secondary"><Label>Secondary</Label></Button>
+            <Button variant="outline"><Label>Outline</Label></Button>
+            <Button variant="ghost"><Label>Ghost</Label></Button>
+          </div>
+        </Cell>
+        <Cell name="Button — sizes">
+          <div className="flex flex-wrap items-center gap-2">
+            <Button size="sm"><Label className="text-primary-foreground">Small</Label></Button>
+            <Button><Label className="text-primary-foreground">Default</Label></Button>
+          </div>
+        </Cell>
+        <Cell name="Badge">
+          <div className="flex flex-wrap gap-2">
+            <Badge><Label className="font-normal">New</Label></Badge>
+            <Badge variant="secondary"><Label className="font-normal">Beta</Label></Badge>
+            <Badge variant="outline"><Label className="font-normal">Draft</Label></Badge>
+          </div>
+        </Cell>
+      </ShowSection>
+
+      <ShowSection title="Inputs & pickers">
+        <Cell name="Input"><Input readOnly /></Cell>
+        <Cell name="Textarea"><Textarea readOnly className="h-20" /></Cell>
+        <Cell name="Select">
+          <Select>
+            <SelectTrigger className="w-full"><SelectValue placeholder="Select…" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="a">Option A</SelectItem>
+              <SelectItem value="b">Option B</SelectItem>
+            </SelectContent>
+          </Select>
+        </Cell>
+        <Cell name="Combobox"><Combobox placeholder="Search…" options={['Poland', 'Germany', 'France']} /></Cell>
+        <Cell name="DatePicker"><DatePicker /></Cell>
+        <Cell name="Field (label + help)">
+          <Field label="Email" help="We'll never share it."><Input readOnly /></Field>
+        </Cell>
+      </ShowSection>
+
+      <ShowSection title="Choice controls">
+        <Cell name="Checkbox">
+          <div className="flex items-center gap-2">
+            <Checkbox defaultChecked />
+            <Label className="font-normal">Subscribe</Label>
+          </div>
+        </Cell>
+        <Cell name="RadioGroup">
+          <RadioGroup defaultValue="monthly" className="gap-2">
+            {['Monthly', 'Yearly'].map((r) => (
+              <div key={r} className="flex items-center gap-2">
+                <RadioGroupItem value={r.toLowerCase()} />
+                <Label className="font-normal">{r}</Label>
+              </div>
+            ))}
+          </RadioGroup>
+        </Cell>
+        <Cell name="Switch">
+          <div className="flex items-center justify-between">
+            <Label className="font-normal">Enabled</Label>
+            <Switch defaultChecked />
+          </div>
+        </Cell>
+        <Cell name="Slider"><Slider defaultValue={[40]} max={100} /></Cell>
+        <Cell name="Avatar"><Avatar><AvatarFallback> </AvatarFallback></Avatar></Cell>
+      </ShowSection>
+
+      <ShowSection title="Layout & containers">
+        <Cell name="Card">
+          <Card size="sm">
+            <CardHeader><Heading level={3}>Card title</Heading></CardHeader>
+            <CardContent><Text lines={2} /></CardContent>
+          </Card>
+        </Cell>
+        <Cell name="Separator">
+          <div className="w-full space-y-2">
+            <Label className="font-normal">Above</Label>
+            <Separator />
+            <Label className="font-normal">Below</Label>
+          </div>
+        </Cell>
+        <Cell name="Tabs">
+          <Tabs defaultValue="one" className="w-full gap-3">
+            <TabsList>
+              <TabsTrigger value="one"><Label>One</Label></TabsTrigger>
+              <TabsTrigger value="two"><Label>Two</Label></TabsTrigger>
+            </TabsList>
+            <TabsContent value="one"><Text lines={2} /></TabsContent>
+            <TabsContent value="two"><Text lines={2} /></TabsContent>
+          </Tabs>
+        </Cell>
+        <Cell name="Accordion" span>
+          <Accordion type="single" collapsible defaultValue="item-0" className="w-full">
+            {['Details', 'Shipping'].map((s, i) => (
+              <AccordionItem key={i} value={`item-${i}`}>
+                <AccordionTrigger><Label>{s}</Label></AccordionTrigger>
+                <AccordionContent><Text lines={2} /></AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </Cell>
+        <Cell name="Grid (bento)">
+          <Grid cols={2} className="w-full gap-3">
+            {[0, 1, 2, 3].map((i) => (
+              <div key={i} className="h-10" style={{ background: 'var(--wf-bar)', borderRadius: 'var(--radius)' }} />
+            ))}
+          </Grid>
+        </Cell>
+      </ShowSection>
+
+      <ShowSection title="Frames">
+        <Cell name="DesktopFrame" span tall>
+          <DesktopFrame>
+            <div className="space-y-2 p-4">
+              <Heading level={3}>Desktop screen</Heading>
+              <Text lines={2} />
+            </div>
+          </DesktopFrame>
+        </Cell>
+        <Cell name="MobileFrame" tall>
+          <MobileFrame width={200}>
+            <div className="space-y-2 p-3">
+              <Heading level={3}>Mobile</Heading>
+              <Text lines={3} />
+            </div>
+          </MobileFrame>
+        </Cell>
+      </ShowSection>
+
+      <ShowSection title="Tables">
+        <Cell name="DataTable" span tall>
+          <DataTable columns={['Name', 'Status', 'Total']} rows={4} selectable pagination={false} />
+        </Cell>
+        <Cell name="DataTable — dense" tall>
+          <DataTable columns={['Item', 'Qty']} rows={5} dense pagination={false} />
+        </Cell>
+      </ShowSection>
+
+      <ShowSection title="Data viz">
+        <Cell name="StatTile"><StatTile label="Revenue" value="$42.8k" /></Cell>
+        <Cell name="BarChart" tall><div className="h-32"><BarChart /></div></Cell>
+        <Cell name="LineChart" tall><div className="h-32"><LineChart /></div></Cell>
+        <Cell name="AreaChart" tall><div className="h-32"><AreaChart /></div></Cell>
+        <Cell name="PieChart" tall><div className="h-32"><PieChart /></div></Cell>
+        <Cell name="DonutChart" tall><div className="h-32"><DonutChart /></div></Cell>
+        <Cell name="Sparkline"><Sparkline className="h-10" /></Cell>
+        <Cell name="Progress">
+          <div className="w-full space-y-3">
+            <Progress value={72} />
+            <Progress value={38} />
+          </div>
+        </Cell>
+        <Cell name="Gauge"><Gauge value={68} className="mx-auto w-40" /></Cell>
+      </ShowSection>
+
+      <ShowSection title="Overlays">
+        <Cell name="Menu (dropdown)">
+          <Menu
+            trigger={<Button variant="outline" size="sm"><Label>Open menu</Label></Button>}
+            label="Actions"
+            items={['Edit', 'Duplicate', 'separator', 'Delete']}
+          />
+        </Cell>
+        <Cell name="Modal (dialog)">
+          <Modal
+            trigger={<Button size="sm"><Label className="text-primary-foreground">Open dialog</Label></Button>}
+            title="Dialog title"
+            description="A short description of what this dialog does."
+            footer={
+              <>
+                <Button variant="outline"><Label>Cancel</Label></Button>
+                <Button><Label className="text-primary-foreground">Confirm</Label></Button>
+              </>
+            }
+          >
+            <Field label="Name"><Input readOnly /></Field>
+          </Modal>
+        </Cell>
+        <Cell name="Tip (tooltip)">
+          <Tip label="Helpful hint on hover">
+            <Button variant="outline" size="sm"><Label>Hover me</Label></Button>
+          </Tip>
+        </Cell>
+      </ShowSection>
+    </div>
+  )
+}
+
 /* -------------------------------- Shell -------------------------------- */
 
-type View = 'contact' | 'dashboard' | 'sales' | 'controls' | 'charts'
+type View = 'showcase' | 'contact' | 'dashboard' | 'sales' | 'controls' | 'charts'
 
 function Segmented<T extends string>({
   value,
@@ -516,20 +775,22 @@ function Segmented<T extends string>({
 
 export default function App() {
   const [level, setLevel] = useState<FidelityLevel>('mid')
-  const [view, setView] = useState<View>('dashboard')
+  const [view, setView] = useState<View>('showcase')
 
   return (
     <div className="min-h-svh bg-neutral-100 text-foreground">
       <div className="sticky top-0 z-10 flex flex-wrap items-center gap-3 border-b border-neutral-300 bg-white px-5 py-3">
         <span className="text-sm font-semibold">Wireframe Kit</span>
-        <Segmented value={view} options={['contact', 'dashboard', 'sales', 'charts', 'controls'] as const} onChange={setView} />
+        <Segmented value={view} options={['showcase', 'contact', 'dashboard', 'sales', 'charts', 'controls'] as const} onChange={setView} />
         <span className="ml-auto text-xs text-neutral-500">Fidelity</span>
         <Segmented value={level} options={FIDELITY_LEVELS} onChange={setLevel} />
       </div>
 
       <div className="space-y-8 p-8">
         <Fidelity level={level}>
-          {view === 'contact' ? (
+          {view === 'showcase' ? (
+            <ShowcaseScreen />
+          ) : view === 'contact' ? (
             <DesktopFrame className="mx-auto max-w-4xl">
               <ContactScreen />
             </DesktopFrame>
