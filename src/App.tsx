@@ -483,14 +483,51 @@ function ChartsScreen() {
   )
 }
 
-/* ---------------------------- Showcase screen --------------------------- */
-/* A presentation gallery of every kit component, grouped by category. The
-   section/cell chrome is plain playground styling; the components inside each
-   cell are the real kit and react to the fidelity dial. */
+/* --------------------------- Showcase (standalone) ---------------------- */
+/* A standalone component-library page: a grouped component list in the left
+   sidebar (anchor links + fidelity dial), and the grouped gallery on the right.
+   The cell/section chrome is plain page styling; the components inside each cell
+   are the real kit and react to the fidelity dial. */
 
-function ShowSection({ title, children }: { title: string; children: ReactNode }) {
+/** Grouped component index — drives the left sidebar; ids match section/cell anchors. */
+const SHOWCASE_GROUPS = [
+  { id: 'typography', title: 'Typography', items: [
+    { id: 'heading', label: 'Heading' }, { id: 'label', label: 'Label' }, { id: 'text', label: 'Text / Lines' },
+  ] },
+  { id: 'actions', title: 'Actions', items: [
+    { id: 'button', label: 'Button' }, { id: 'badge', label: 'Badge' },
+  ] },
+  { id: 'inputs', title: 'Inputs & pickers', items: [
+    { id: 'input', label: 'Input' }, { id: 'textarea', label: 'Textarea' }, { id: 'select', label: 'Select' },
+    { id: 'combobox', label: 'Combobox' }, { id: 'datepicker', label: 'DatePicker' }, { id: 'field', label: 'Field' },
+  ] },
+  { id: 'choice', title: 'Choice controls', items: [
+    { id: 'checkbox', label: 'Checkbox' }, { id: 'radiogroup', label: 'RadioGroup' }, { id: 'switch', label: 'Switch' },
+    { id: 'slider', label: 'Slider' }, { id: 'avatar', label: 'Avatar' },
+  ] },
+  { id: 'layout', title: 'Layout & containers', items: [
+    { id: 'card', label: 'Card' }, { id: 'separator', label: 'Separator' }, { id: 'tabs', label: 'Tabs' },
+    { id: 'accordion', label: 'Accordion' }, { id: 'grid', label: 'Grid' },
+  ] },
+  { id: 'frames', title: 'Frames', items: [
+    { id: 'desktopframe', label: 'DesktopFrame' }, { id: 'mobileframe', label: 'MobileFrame' },
+  ] },
+  { id: 'tables', title: 'Tables', items: [
+    { id: 'datatable', label: 'DataTable' },
+  ] },
+  { id: 'dataviz', title: 'Data viz', items: [
+    { id: 'stattile', label: 'StatTile' }, { id: 'barchart', label: 'BarChart' }, { id: 'linechart', label: 'LineChart' },
+    { id: 'areachart', label: 'AreaChart' }, { id: 'piechart', label: 'PieChart' }, { id: 'donutchart', label: 'DonutChart' },
+    { id: 'sparkline', label: 'Sparkline' }, { id: 'progress', label: 'Progress' }, { id: 'gauge', label: 'Gauge' },
+  ] },
+  { id: 'overlays', title: 'Overlays', items: [
+    { id: 'menu', label: 'Menu' }, { id: 'modal', label: 'Modal' }, { id: 'tip', label: 'Tip' },
+  ] },
+] as const
+
+function ShowSection({ id, title, children }: { id: string; title: string; children: ReactNode }) {
   return (
-    <section className="space-y-5">
+    <section id={id} className="scroll-mt-6 space-y-5">
       <div className="flex items-center gap-3">
         <h2 className="text-xs font-semibold tracking-widest text-neutral-500 uppercase">{title}</h2>
         <div className="h-px flex-1 bg-neutral-200" />
@@ -501,18 +538,20 @@ function ShowSection({ title, children }: { title: string; children: ReactNode }
 }
 
 function Cell({
+  id,
   name,
   children,
   span,
   tall,
 }: {
+  id?: string
   name: string
   children: ReactNode
   span?: boolean
   tall?: boolean
 }) {
   return (
-    <div className={'flex flex-col gap-2 ' + (span ? 'sm:col-span-2' : '')}>
+    <div id={id} className={'flex scroll-mt-20 flex-col gap-2 ' + (span ? 'sm:col-span-2' : '')}>
       <div
         className={
           'flex flex-1 items-center justify-center rounded-lg border border-neutral-200 bg-white p-5 ' +
@@ -526,32 +565,28 @@ function Cell({
   )
 }
 
-function ShowcaseScreen() {
+/** The gallery content (grouped sections). Rendered inside a <Fidelity> wrapper. */
+function ShowcaseContent() {
   return (
-    <div className="mx-auto max-w-6xl space-y-10 rounded-xl border border-neutral-200 bg-neutral-50 p-6 sm:p-8">
-      <div className="space-y-1">
-        <Heading level={1}>Component library</Heading>
-        <Text lines={1} className="w-80">Every kit component, grouped — reacts to the fidelity dial above</Text>
-      </div>
-
-      <ShowSection title="Typography">
-        <Cell name="Heading (1 / 2 / 3)">
+    <div className="space-y-10">
+      <ShowSection id="typography" title="Typography">
+        <Cell id="heading" name="Heading (1 / 2 / 3)">
           <div className="space-y-2">
             <Heading level={1}>Display heading</Heading>
             <Heading level={2}>Section heading</Heading>
             <Heading level={3}>Subsection</Heading>
           </div>
         </Cell>
-        <Cell name="Label">
+        <Cell id="label" name="Label">
           <Label>Form label</Label>
         </Cell>
-        <Cell name="Text / Lines">
+        <Cell id="text" name="Text / Lines">
           <Text lines={3} />
         </Cell>
       </ShowSection>
 
-      <ShowSection title="Actions">
-        <Cell name="Button — variants">
+      <ShowSection id="actions" title="Actions">
+        <Cell id="button" name="Button — variants">
           <div className="flex flex-wrap gap-2">
             <Button><Label className="text-primary-foreground">Primary</Label></Button>
             <Button variant="secondary"><Label>Secondary</Label></Button>
@@ -565,7 +600,7 @@ function ShowcaseScreen() {
             <Button><Label className="text-primary-foreground">Default</Label></Button>
           </div>
         </Cell>
-        <Cell name="Badge">
+        <Cell id="badge" name="Badge">
           <div className="flex flex-wrap gap-2">
             <Badge><Label className="font-normal">New</Label></Badge>
             <Badge variant="secondary"><Label className="font-normal">Beta</Label></Badge>
@@ -574,10 +609,10 @@ function ShowcaseScreen() {
         </Cell>
       </ShowSection>
 
-      <ShowSection title="Inputs & pickers">
-        <Cell name="Input"><Input readOnly /></Cell>
-        <Cell name="Textarea"><Textarea readOnly className="h-20" /></Cell>
-        <Cell name="Select">
+      <ShowSection id="inputs" title="Inputs & pickers">
+        <Cell id="input" name="Input"><Input readOnly /></Cell>
+        <Cell id="textarea" name="Textarea"><Textarea readOnly className="h-20" /></Cell>
+        <Cell id="select" name="Select">
           <Select>
             <SelectTrigger className="w-full"><SelectValue placeholder="Select…" /></SelectTrigger>
             <SelectContent>
@@ -586,21 +621,21 @@ function ShowcaseScreen() {
             </SelectContent>
           </Select>
         </Cell>
-        <Cell name="Combobox"><Combobox placeholder="Search…" options={['Poland', 'Germany', 'France']} /></Cell>
-        <Cell name="DatePicker"><DatePicker /></Cell>
-        <Cell name="Field (label + help)">
+        <Cell id="combobox" name="Combobox"><Combobox placeholder="Search…" options={['Poland', 'Germany', 'France']} /></Cell>
+        <Cell id="datepicker" name="DatePicker"><DatePicker /></Cell>
+        <Cell id="field" name="Field (label + help)">
           <Field label="Email" help="We'll never share it."><Input readOnly /></Field>
         </Cell>
       </ShowSection>
 
-      <ShowSection title="Choice controls">
-        <Cell name="Checkbox">
+      <ShowSection id="choice" title="Choice controls">
+        <Cell id="checkbox" name="Checkbox">
           <div className="flex items-center gap-2">
             <Checkbox defaultChecked />
             <Label className="font-normal">Subscribe</Label>
           </div>
         </Cell>
-        <Cell name="RadioGroup">
+        <Cell id="radiogroup" name="RadioGroup">
           <RadioGroup defaultValue="monthly" className="gap-2">
             {['Monthly', 'Yearly'].map((r) => (
               <div key={r} className="flex items-center gap-2">
@@ -610,31 +645,31 @@ function ShowcaseScreen() {
             ))}
           </RadioGroup>
         </Cell>
-        <Cell name="Switch">
+        <Cell id="switch" name="Switch">
           <div className="flex items-center justify-between">
             <Label className="font-normal">Enabled</Label>
             <Switch defaultChecked />
           </div>
         </Cell>
-        <Cell name="Slider"><Slider defaultValue={[40]} max={100} /></Cell>
-        <Cell name="Avatar"><Avatar><AvatarFallback> </AvatarFallback></Avatar></Cell>
+        <Cell id="slider" name="Slider"><Slider defaultValue={[40]} max={100} /></Cell>
+        <Cell id="avatar" name="Avatar"><Avatar><AvatarFallback> </AvatarFallback></Avatar></Cell>
       </ShowSection>
 
-      <ShowSection title="Layout & containers">
-        <Cell name="Card">
+      <ShowSection id="layout" title="Layout & containers">
+        <Cell id="card" name="Card">
           <Card size="sm">
             <CardHeader><Heading level={3}>Card title</Heading></CardHeader>
             <CardContent><Text lines={2} /></CardContent>
           </Card>
         </Cell>
-        <Cell name="Separator">
+        <Cell id="separator" name="Separator">
           <div className="w-full space-y-2">
             <Label className="font-normal">Above</Label>
             <Separator />
             <Label className="font-normal">Below</Label>
           </div>
         </Cell>
-        <Cell name="Tabs">
+        <Cell id="tabs" name="Tabs">
           <Tabs defaultValue="one" className="w-full gap-3">
             <TabsList>
               <TabsTrigger value="one"><Label>One</Label></TabsTrigger>
@@ -644,7 +679,7 @@ function ShowcaseScreen() {
             <TabsContent value="two"><Text lines={2} /></TabsContent>
           </Tabs>
         </Cell>
-        <Cell name="Accordion" span>
+        <Cell id="accordion" name="Accordion" span>
           <Accordion type="single" collapsible defaultValue="item-0" className="w-full">
             {['Details', 'Shipping'].map((s, i) => (
               <AccordionItem key={i} value={`item-${i}`}>
@@ -654,7 +689,7 @@ function ShowcaseScreen() {
             ))}
           </Accordion>
         </Cell>
-        <Cell name="Grid (bento)">
+        <Cell id="grid" name="Grid (bento)">
           <Grid cols={2} className="w-full gap-3">
             {[0, 1, 2, 3].map((i) => (
               <div key={i} className="h-10" style={{ background: 'var(--wf-bar)', borderRadius: 'var(--radius)' }} />
@@ -663,8 +698,8 @@ function ShowcaseScreen() {
         </Cell>
       </ShowSection>
 
-      <ShowSection title="Frames">
-        <Cell name="DesktopFrame" span tall>
+      <ShowSection id="frames" title="Frames">
+        <Cell id="desktopframe" name="DesktopFrame" span tall>
           <DesktopFrame>
             <div className="space-y-2 p-4">
               <Heading level={3}>Desktop screen</Heading>
@@ -672,7 +707,7 @@ function ShowcaseScreen() {
             </div>
           </DesktopFrame>
         </Cell>
-        <Cell name="MobileFrame" tall>
+        <Cell id="mobileframe" name="MobileFrame" tall>
           <MobileFrame width={200}>
             <div className="space-y-2 p-3">
               <Heading level={3}>Mobile</Heading>
@@ -682,8 +717,8 @@ function ShowcaseScreen() {
         </Cell>
       </ShowSection>
 
-      <ShowSection title="Tables">
-        <Cell name="DataTable" span tall>
+      <ShowSection id="tables" title="Tables">
+        <Cell id="datatable" name="DataTable" span tall>
           <DataTable columns={['Name', 'Status', 'Total']} rows={4} selectable pagination={false} />
         </Cell>
         <Cell name="DataTable — dense" tall>
@@ -691,32 +726,32 @@ function ShowcaseScreen() {
         </Cell>
       </ShowSection>
 
-      <ShowSection title="Data viz">
-        <Cell name="StatTile"><StatTile label="Revenue" value="$42.8k" /></Cell>
-        <Cell name="BarChart" tall><div className="h-32"><BarChart /></div></Cell>
-        <Cell name="LineChart" tall><div className="h-32"><LineChart /></div></Cell>
-        <Cell name="AreaChart" tall><div className="h-32"><AreaChart /></div></Cell>
-        <Cell name="PieChart" tall><div className="h-32"><PieChart /></div></Cell>
-        <Cell name="DonutChart" tall><div className="h-32"><DonutChart /></div></Cell>
-        <Cell name="Sparkline"><Sparkline className="h-10" /></Cell>
-        <Cell name="Progress">
+      <ShowSection id="dataviz" title="Data viz">
+        <Cell id="stattile" name="StatTile"><StatTile label="Revenue" value="$42.8k" /></Cell>
+        <Cell id="barchart" name="BarChart" tall><div className="h-32"><BarChart /></div></Cell>
+        <Cell id="linechart" name="LineChart" tall><div className="h-32"><LineChart /></div></Cell>
+        <Cell id="areachart" name="AreaChart" tall><div className="h-32"><AreaChart /></div></Cell>
+        <Cell id="piechart" name="PieChart" tall><div className="h-32"><PieChart /></div></Cell>
+        <Cell id="donutchart" name="DonutChart" tall><div className="h-32"><DonutChart /></div></Cell>
+        <Cell id="sparkline" name="Sparkline"><Sparkline className="h-10" /></Cell>
+        <Cell id="progress" name="Progress">
           <div className="w-full space-y-3">
             <Progress value={72} />
             <Progress value={38} />
           </div>
         </Cell>
-        <Cell name="Gauge"><Gauge value={68} className="mx-auto w-40" /></Cell>
+        <Cell id="gauge" name="Gauge"><Gauge value={68} className="mx-auto w-40" /></Cell>
       </ShowSection>
 
-      <ShowSection title="Overlays">
-        <Cell name="Menu (dropdown)">
+      <ShowSection id="overlays" title="Overlays">
+        <Cell id="menu" name="Menu (dropdown)">
           <Menu
             trigger={<Button variant="outline" size="sm"><Label>Open menu</Label></Button>}
             label="Actions"
             items={['Edit', 'Duplicate', 'separator', 'Delete']}
           />
         </Cell>
-        <Cell name="Modal (dialog)">
+        <Cell id="modal" name="Modal (dialog)">
           <Modal
             trigger={<Button size="sm"><Label className="text-primary-foreground">Open dialog</Label></Button>}
             title="Dialog title"
@@ -731,12 +766,94 @@ function ShowcaseScreen() {
             <Field label="Name"><Input readOnly /></Field>
           </Modal>
         </Cell>
-        <Cell name="Tip (tooltip)">
+        <Cell id="tip" name="Tip (tooltip)">
           <Tip label="Helpful hint on hover">
             <Button variant="outline" size="sm"><Label>Hover me</Label></Button>
           </Tip>
         </Cell>
       </ShowSection>
+    </div>
+  )
+}
+
+/** Standalone page: grouped component list on the left, gallery on the right. */
+function ShowcasePage({
+  level,
+  setLevel,
+  setView,
+}: {
+  level: FidelityLevel
+  setLevel: (l: FidelityLevel) => void
+  setView: (v: View) => void
+}) {
+  return (
+    <div className="min-h-svh bg-neutral-100 text-foreground">
+      <div className="mx-auto flex max-w-[90rem]">
+        <aside className="sticky top-0 hidden h-svh w-64 shrink-0 flex-col gap-5 overflow-y-auto border-r border-neutral-200 bg-white px-4 py-5 md:flex">
+          <div>
+            <div className="text-sm font-semibold">Wireframe Kit</div>
+            <div className="text-xs text-neutral-500">Component library</div>
+          </div>
+
+          <div className="space-y-1.5">
+            <span className="text-[11px] font-semibold tracking-widest text-neutral-500 uppercase">Fidelity</span>
+            <Segmented value={level} options={FIDELITY_LEVELS} onChange={setLevel} />
+          </div>
+
+          <nav className="space-y-4">
+            {SHOWCASE_GROUPS.map((g) => (
+              <div key={g.id}>
+                <a
+                  href={`#${g.id}`}
+                  className="block text-[11px] font-semibold tracking-widest text-neutral-500 uppercase hover:text-neutral-900"
+                >
+                  {g.title}
+                </a>
+                <ul className="mt-1.5 border-l border-neutral-200">
+                  {g.items.map((it) => (
+                    <li key={it.id}>
+                      <a
+                        href={`#${it.id}`}
+                        className="-ml-px block border-l border-transparent py-1 pl-3 text-sm text-neutral-600 hover:border-neutral-900 hover:text-neutral-900"
+                      >
+                        {it.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </nav>
+
+          <div className="mt-auto border-t border-neutral-200 pt-4">
+            <span className="text-[11px] font-semibold tracking-widest text-neutral-500 uppercase">Demo screens</span>
+            <div className="mt-2 flex flex-col gap-0.5">
+              {(['contact', 'dashboard', 'sales', 'charts', 'controls'] as const).map((v) => (
+                <button
+                  key={v}
+                  type="button"
+                  onClick={() => setView(v)}
+                  className="rounded px-2 py-1 text-left text-sm text-neutral-600 capitalize hover:bg-neutral-100 hover:text-neutral-900"
+                >
+                  {v}
+                </button>
+              ))}
+            </div>
+          </div>
+        </aside>
+
+        <main className="min-w-0 flex-1 px-5 py-8 sm:px-8">
+          <div className="mb-8 space-y-1">
+            <h1 className="text-xl font-semibold text-neutral-900">Components</h1>
+            <p className="text-sm text-neutral-500">
+              Every component in the kit, grouped. Switch fidelity in the sidebar to see low / mid / high.
+            </p>
+          </div>
+          <Fidelity level={level}>
+            <ShowcaseContent />
+          </Fidelity>
+        </main>
+      </div>
     </div>
   )
 }
@@ -777,6 +894,11 @@ export default function App() {
   const [level, setLevel] = useState<FidelityLevel>('mid')
   const [view, setView] = useState<View>('showcase')
 
+  // The Showcase is a standalone page (its own left sidebar + fidelity dial).
+  if (view === 'showcase') {
+    return <ShowcasePage level={level} setLevel={setLevel} setView={setView} />
+  }
+
   return (
     <div className="min-h-svh bg-neutral-100 text-foreground">
       <div className="sticky top-0 z-10 flex flex-wrap items-center gap-3 border-b border-neutral-300 bg-white px-5 py-3">
@@ -788,9 +910,7 @@ export default function App() {
 
       <div className="space-y-8 p-8">
         <Fidelity level={level}>
-          {view === 'showcase' ? (
-            <ShowcaseScreen />
-          ) : view === 'contact' ? (
+          {view === 'contact' ? (
             <DesktopFrame className="mx-auto max-w-4xl">
               <ContactScreen />
             </DesktopFrame>

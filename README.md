@@ -33,10 +33,11 @@ npm run preview    # serve the production build
 npm run lint       # oxlint
 ```
 
-The dev server opens a **playground** with a fidelity toggle (top-right) and a view switcher:
-**Showcase · Contact · Dashboard (Analytics) · Sales · Charts · Controls**. The **Showcase**
-view (default) is a presentation gallery of every component, grouped by category — the best
-place to see the whole kit react to the fidelity dial at once.
+The app opens on the **Showcase** — a standalone component-library page with a grouped
+component list in the left sidebar (anchor links + the fidelity dial) and the full gallery on
+the right. From its sidebar you can jump to the demo screens: **Contact · Dashboard
+(Analytics) · Sales · Charts · Controls**, each of which has its own fidelity toggle and a link
+back to the Showcase.
 
 ---
 
