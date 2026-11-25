@@ -101,14 +101,6 @@ by keying CSS on `[data-fidelity]` + each component's `[data-slot]`.
 
 ---
 
-## Project docs
-
-- [`SCOPE.md`](SCOPE.md) — full spec and rationale
-- [`TASKS.md`](TASKS.md) — build checklist
-- [`HANDOFF.md`](HANDOFF.md) — current state, decisions and gotchas
-
----
-
 ## Screenshots
 
 _To add later — drop PNGs in `docs/images/` and embed them here (e.g. the Charts or Sales view
